@@ -94,7 +94,12 @@
         </transition>
       </v-container>
       <v-dialog v-model="loginDialog" persistent max-width="800">
-        <LoginComponent :organizations="organizations" @logIn="signIn($event)" @register="signUp($event)" v-if="loginDialog"></LoginComponent>
+        <LoginComponent
+          :organizations="organizations"
+          @logIn="signIn($event)"
+          @register="signUp($event)"
+          v-if="loginDialog"
+        ></LoginComponent>
       </v-dialog>
       <v-snackbar v-model="errorDialog" :color="'error'" :timeout="5000" :vertical="false">
         <span v-html="errorMessage"></span>
@@ -131,6 +136,7 @@ export default {
     customerList: [],
     token: null,
     user: {},
+    userAppointments: [],
     organizations: [],
     items: [
       { id: "serverlist", icon: "mdi-server-network", text: "Server List" },
@@ -172,10 +178,19 @@ export default {
     },
     async signIn(args) {
       try {
-        debugger
+        debugger;
         const response = await ajax.postJTW(args);
-        this.user = await ajax.getBearer("/users/me",response.token);
-        //-todo check if is client fetch appointments or if it's civil do the same with orgID
+        this.token = response.token;
+        this.user = await ajax.getBearer("/users/me", this.token);
+        debugger
+        if (this.user.is_client)
+          this.userAppointments = await ajax.getBearer("/appointment/", this.token);
+        else
+          this.userAppointments = await ajax.getBearer(
+            `/appointment/${this.user.organization}`,
+            this.token
+          );
+          debugger
         this.loginDialog = false;
       } catch (error) {
         eventBus.$emit("error", "Invalid Username or Password");
@@ -183,6 +198,7 @@ export default {
     },
     async signUp(args) {
       try {
+        debugger;
         const response = await ajax.postNew(args, "/users/register");
         eventBus.$emit("register-ok", response.email);
       } catch (error) {
@@ -191,8 +207,8 @@ export default {
     },
     async signOut() {
       try {
-        debugger
-         window.location.reload(true);
+        debugger;
+        window.location.reload(true);
       } catch (e) {
         eventBus.$emit("error", e.response.data);
       }

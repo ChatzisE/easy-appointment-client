@@ -37,7 +37,6 @@ const ajax = {
         return s.data;
     },
     async postNew(args, url) {
-        debugger
         const config = {
             method: 'post',
             url: url,
