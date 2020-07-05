@@ -183,13 +183,8 @@ export default {
         this.token = response.token;
         this.user = await ajax.getBearer("/users/me", this.token);
         debugger
-        if (this.user.is_client)
-          this.userAppointments = await ajax.getBearer("/appointment/", this.token);
-        else
-          this.userAppointments = await ajax.getBearer(
-            `/appointment/${this.user.organization}`,
-            this.token
-          );
+          const _appointments = await ajax.getBearer("/appointment/", this.token);
+          this.userAppointments = JSON.parse(_appointments);
           debugger
         this.loginDialog = false;
       } catch (error) {

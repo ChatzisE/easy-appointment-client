@@ -31,9 +31,7 @@ const ajax = {
             },
             data: qs.stringify(args)
         };
-        debugger
         const s = await axios(config);
-        debugger
         return s.data;
     },
     async postNew(args, url) {
@@ -49,7 +47,6 @@ const ajax = {
         return s.data;
     },
     async getBearer(url, token) {
-        debugger
         const config = {
             method: 'get',
             url: url,
