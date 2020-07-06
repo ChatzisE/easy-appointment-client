@@ -3,12 +3,12 @@
     <v-tabs
       v-model="tab"
       show-arrows
-      background-color="deep-purple accent-4"
+      background-color="blue darken-3"
       icons-and-text
       dark
       grow
     >
-      <v-tabs-slider color="purple darken-4"></v-tabs-slider>
+      <v-tabs-slider color="blue darken-3"></v-tabs-slider>
       <v-tab v-for="i in tabs" :key="i.name">
         <v-icon large>{{ i.icon }}</v-icon>
         <div class="caption py-1">{{ i.name }}</div>
@@ -172,7 +172,6 @@ export default {
       }
     },
     login() {
-      debugger;
       const obj = {
         username: this.loginEmail,
         password: this.loginPassword
@@ -195,7 +194,6 @@ export default {
   },
   created() {},
   mounted() {
-    debugger;
     eventBus.$on("register-ok", email => {
       this.tab = 0;
       this.loginEmail = email;
