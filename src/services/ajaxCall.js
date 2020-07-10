@@ -14,6 +14,11 @@ const ajax = {
         var s = await axios.post(url, _args)
         return s.data;
     },
+    async put(url, args) {
+        let _args = args || {};
+        var s = await axios.put(url, _args)
+        return s.data;
+    },
     async delete(url, args) {
         let _args = {};
         if (args) {

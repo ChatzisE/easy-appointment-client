@@ -3,12 +3,12 @@
     <v-tabs
       v-model="tab"
       show-arrows
-      background-color="blue darken-3"
+      background-color="#004254"
       icons-and-text
       dark
       grow
     >
-      <v-tabs-slider color="blue darken-3"></v-tabs-slider>
+      <v-tabs-slider color="#004254"></v-tabs-slider>
       <v-tab v-for="i in tabs" :key="i.name">
         <v-icon large>{{ i.icon }}</v-icon>
         <div class="caption py-1">{{ i.name }}</div>
@@ -42,7 +42,7 @@
                 <v-col class="d-flex" cols="12" sm="6" xsm="12"></v-col>
                 <v-spacer></v-spacer>
                 <v-col class="d-flex" cols="12" sm="3" xsm="12" align-end>
-                  <v-btn x-large block :disabled="!valid" color="success" @click="login">Login</v-btn>
+                  <v-btn x-large block :disabled="!valid" color="#4DE17D" @click="login">Login</v-btn>
                 </v-col>
               </v-row>
             </v-form>
@@ -118,7 +118,7 @@
                 </v-col>
                 <v-spacer></v-spacer>
                 <v-col class="d-flex ml-auto" cols="12" sm="3" xsm="12">
-                  <v-btn x-large block :disabled="!valid" color="success" @click="register">Register</v-btn>
+                  <v-btn x-large block :disabled="!valid" color="#4DE17D" @click="register">Register</v-btn>
                 </v-col>
               </v-row>
             </v-form>

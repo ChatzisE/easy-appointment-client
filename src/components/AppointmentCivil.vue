@@ -2,31 +2,19 @@
   <v-data-table :headers="headers" :items="appointementsList" sort-by="date" class="elevation-1">
     <template v-slot:top>
       <v-toolbar flat color="white">
-        <v-toolbar-title>My Appointments</v-toolbar-title>
+        <v-toolbar-title>My Organization Appointments</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn color="#004254" dark class="mb-2" v-bind="attrs" v-on="on">New Appointment</v-btn>
-          </template>
           <v-card>
             <v-card-title>
-              <span class="headline">{{ formTitle }}</span>
+              <span class="headline">Approve Appointment</span>
             </v-card-title>
 
             <v-card-text>
               <v-container>
                 <v-row>
                   <v-col cols="12" sm="12" md="12">
-                    <v-combobox
-                      v-model="editedItem.org"
-                      :items="organizations"
-                      item-text="preferredLabel"
-                      item-value="code"
-                      label="Select Organization"
-                    ></v-combobox>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
                     <v-menu
                       :close-on-content-click="false"
                       :nudge-right="40"
@@ -52,7 +40,7 @@
                       ></v-date-picker>
                     </v-menu>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
+                  <v-col cols="12" sm="12" md="12">
                     <v-menu
                       ref="menu"
                       v-model="timeMenu"
@@ -96,8 +84,13 @@
       </v-toolbar>
     </template>
     <template v-slot:item.actions="{ item }">
-      <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
-      <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
+      <v-icon
+        v-show="!item.is_approved"
+        formTitlesmall
+        color="green"
+        class="mr-2"
+        @click="editItem(item)"
+      >mdi-check-bold</v-icon>
     </template>
     <template v-slot:no-data>
       <v-btn color="primary" @click="initialize">Reset</v-btn>
@@ -128,7 +121,8 @@ export default {
         value: "org_name"
       },
       { text: "Date", value: "appointment_date" },
-      { text: "Status", value: "is_approved" }
+      { text: "Status", value: "is_approved" },
+      { text: "Aprrove", value: "actions", sortable: false }
     ],
     appointementsList: [],
     editedIndex: -1,
@@ -152,11 +146,7 @@ export default {
       return moment(value).format("MMMM Do YYYY, hh:mm");
     }
   },
-  computed: {
-    formTitle() {
-      return this.editedIndex === -1 ? "New Appointment" : "Edit Appointment";
-    }
-  },
+  computed: {},
   watch: {
     dialog(val) {
       val || this.close();
@@ -171,14 +161,16 @@ export default {
   },
   methods: {
     initialize() {
+      debugger;
       this.appointments.forEach(a => {
         const _appointment = {
           user_id: a.user_id,
           org_code: a.org_code,
           is_approved: a.is_approved,
           org_name: a.org_name,
+          appointment_id: a.id,
           appointment_date: a.appointment_datetime,
-          appointment_time: moment(a.appointment_datetime).format("HH.mm")
+          appointment_time: moment(a.appointment_datetime).format("HH:mm")
         };
         this.appointementsList.push(_appointment);
       });
@@ -189,7 +181,16 @@ export default {
     },
     editItem(item) {
       this.editedIndex = this.appointementsList.indexOf(item);
-      this.editedItem = Object.assign({}, item);
+      const dtParts = item.appointment_date.split("T");
+      const obj = {
+        user_id: item.user_id,
+        org: item.org_code,
+        is_approved: item.is_approved,
+        appointment_date: dtParts[0],
+        appointment_time: item.appointment_time,
+        appointment_id: item.appointment_id
+      };
+      this.editedItem = obj;
       this.dialog = true;
     },
     deleteItem(item) {
@@ -207,23 +208,16 @@ export default {
     },
 
     save() {
-      if (this.editedIndex > -1) {
-        Object.assign(
-          this.appointementsList[this.editedIndex],
-          this.editedItem
-        );
-      } else {
-        const _datetime = moment(
-          `${this.editedItem.appointment_date} ${this.editedItem.appointment_time}`
-        ).format();
-        const obj = {
-          user_id: this.user.id,
-          org_code: Number(this.editedItem.org.code),
-          org_name: this.editedItem.org.preferredLabel,
-          appointment_datetime: _datetime
-        };
-        this.$emit("newAppointment", obj);
-      }
+      const _datetime = moment(
+        `${this.editedItem.appointment_date} ${this.editedItem.appointment_time}`
+      ).format();
+      const obj = {
+        org_code: this.editedItem.org,
+        appointment_id: this.editedItem.appointment_id,
+        appointment_datetime: _datetime,
+        user_id: this.user.id
+      };
+      this.$emit("approveAppointment", obj);
       this.close();
     }
   }
