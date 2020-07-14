@@ -82,7 +82,7 @@ export default {
         const response = await ajax.postJTW(args);
         this.token = response.token;
         this.user = await ajax.getBearer("/users/me", this.token);
-        const _appointments = await ajax.getBearer("/appointment/", this.token);
+        const _appointments = await ajax.getBearer("/appointment", this.token);
         this.userAppointments = JSON.parse(_appointments);
         this.loginDialog = false;
       } catch (error) {
@@ -106,8 +106,8 @@ export default {
     },
     async createNewAppointment(obj) {
       try {
-        const response = await ajax.post("/appointment/", obj);
-        const _appointments = await ajax.getBearer("/appointment/", this.token);
+        const response = await ajax.post("/appointment", obj);
+        const _appointments = await ajax.getBearer("/appointment", this.token);
         this.userAppointments = JSON.parse(_appointments);
       } catch (error) {
         eventBus.$emit("error", error.message);
@@ -115,8 +115,8 @@ export default {
     },
     async approveAppointment(obj) {
       try {
-        const response = await ajax.put("/appointment/", obj);
-        const _appointments = await ajax.getBearer("/appointment/", this.token);
+        const response = await ajax.put("/appointment", obj);
+        const _appointments = await ajax.getBearer("/appointment", this.token);
         this.userAppointments = JSON.parse(_appointments);
       } catch (error) {
         eventBus.$emit("error", error.message);
@@ -130,8 +130,8 @@ export default {
     });
   },
   async created() {
-    window.console.log("/organizations/false");
-    const response = await ajax.get("/organizations/false");
+    window.console.log("new");
+    const response = await ajax.get("/organizations/false/");
     this.organizations = response.data;
     console.log(this.organizations);
     this.initialize = true;

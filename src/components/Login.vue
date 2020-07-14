@@ -179,6 +179,7 @@ export default {
       this.$emit("logIn", obj);
     },
     register() {
+      debugger
       const obj = {
         email: this.email,
         is_active: true,
@@ -187,7 +188,7 @@ export default {
         user_name: this.firstName,
         user_surname: this.lastName,
         is_client: this.clientFlag,
-        organization: this.civilService.code
+        organization: (this.clientFlag ? 0:this.civilService.code)
       };
       this.$emit("register", obj);
     }
