@@ -1,7 +1,9 @@
 <template>
   <v-app v-if="initialize" id="inspire">
     <v-app-bar :clipped-left="$vuetify.breakpoint.lgAndUp" app color="#004254" dark>
-      <div class="flex-grow-1"><img style="width:185px" src="/Content/EA-white.svg" alt=""></div>
+      <div class="flex-grow-1">
+        <img style="width:185px" src="/Content/EA-white.svg" alt />
+      </div>
       <v-chip>
         <v-icon left color="#4DE17D">mdi-account</v-icon>
         {{user.user_name}} {{user.user_surname}}
@@ -14,6 +16,7 @@
           <Appointment
             v-if="!loginDialog && user.is_client"
             @newAppointment="createNewAppointment($event)"
+            @refresh="fetchAppointments"
             :user="user"
             :organizations="organizations"
             :appointments="userAppointments"
@@ -21,6 +24,7 @@
           <AppointmentCivil
             v-if="!loginDialog && !user.is_client"
             @approveAppointment="approveAppointment($event)"
+            @refresh="fetchAppointments"
             :user="user"
             :organizations="organizations"
             :appointments="userAppointments"
@@ -40,10 +44,6 @@
         <v-btn dark @click="errorDialog = false" style="float: right;">Close</v-btn>
       </v-snackbar>
     </v-content>
-    <v-toolbar-title style="width: 300px" class="ml-0 pl-4">
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-      <span class="hidden-sm-and-down">{{selectedItem.text}}</span>
-    </v-toolbar-title>
   </v-app>
 </template>
 
@@ -112,6 +112,10 @@ export default {
       } catch (error) {
         eventBus.$emit("error", error.message);
       }
+    },
+    async fetchAppointments() {
+      const _appointments = await ajax.getBearer("/appointment/", this.token);
+      this.userAppointments = JSON.parse(_appointments);
     },
     async approveAppointment(obj) {
       try {

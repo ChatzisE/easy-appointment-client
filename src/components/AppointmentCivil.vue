@@ -4,6 +4,10 @@
       <v-toolbar flat color="white">
         <v-toolbar-title>My Organization Appointments</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
+        <v-toolbar-title>{{org_name}}</v-toolbar-title>
+        <v-btn @click="$emit('refresh')" icon color="#4DE17D">
+          <v-icon>mdi-cached</v-icon>
+        </v-btn>
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
           <v-card>
@@ -36,6 +40,7 @@
                       </template>
                       <v-date-picker
                         v-model="editedItem.appointment_date"
+                        :min="dtNow"
                         @input="dateMenu = false"
                       ></v-date-picker>
                     </v-menu>
@@ -114,6 +119,7 @@ export default {
     dialog: false,
     dateMenu: false,
     timeMenu: false,
+    dtNow: moment(),
     headers: [
       {
         text: "Organization",
@@ -161,7 +167,10 @@ export default {
   },
   methods: {
     initialize() {
-      debugger;
+      const org = this.organizations.find(
+        o => o.code === this.user.organization.toString()
+      ).preferredLabel;
+      this.org_name = org;
       this.appointments.forEach(a => {
         const _appointment = {
           user_id: a.user_id,

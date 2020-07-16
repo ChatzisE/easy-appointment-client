@@ -4,6 +4,9 @@
       <v-toolbar flat color="white">
         <v-toolbar-title>My Appointments</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
+        <v-btn @click="$emit('refresh')" icon color="#4DE17D">
+          <v-icon>mdi-cached</v-icon>
+        </v-btn>
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on, attrs }">
@@ -48,6 +51,9 @@
                       </template>
                       <v-date-picker
                         v-model="editedItem.appointment_date"
+                        color="#004254"
+                        event-color="#004254"
+                        :min="minDT"
                         @input="dateMenu = false"
                       ></v-date-picker>
                     </v-menu>
@@ -77,6 +83,7 @@
                       <v-time-picker
                         v-if="timeMenu"
                         v-model="editedItem.appointment_time"
+                        color="#004254"
                         full-width
                         @click:minute="$refs.menu.save(editedItem.appointment_time)"
                       ></v-time-picker>
@@ -88,8 +95,8 @@
 
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-              <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+              <v-btn color="#0BD4C3" text @click="close">Cancel</v-btn>
+              <v-btn color="#0BD4C3" text @click="save">Save</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -120,6 +127,9 @@ export default {
   data: () => ({
     dialog: false,
     dateMenu: false,
+    minDT: moment()
+      .add(-1, "days")
+      .format(),
     timeMenu: false,
     headers: [
       {
